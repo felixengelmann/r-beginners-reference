@@ -1,0 +1,232 @@
+%% TO DO:
+%% xyplot()
+%% segments()
+%% arrows()
+%% mfrow
+%% axis
+
+\documentclass[a4paper,9pt]{extarticle}
+\usepackage[paper=a4paper,margin=0in, landscape]{geometry}
+\usepackage{fullpage}
+\usepackage{multicol}
+\usepackage{enumitem}
+%\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{graphicx}
+
+\pagestyle{empty}
+\usepackage{titlesec} % Used to customize the \section command
+\titleformat{\section}{\Large\scshape\raggedright\bfseries}{}{0em}{}[] % Text formatting of sections
+\titlespacing{\section}{0pt}{4pt}{0pt} % Spacing around sections
+\renewcommand{\descriptionlabel}[1]{\hspace{\labelsep}\textbf{\texttt{#1}}}
+\setlist[description]{noitemsep,nolistsep}
+\renewcommand{\familydefault}{\sfdefault}
+
+
+
+\title{R Beginner's Reference}
+\author{Felix Engelmann}
+%\date{}            
+
+
+
+\begin{document}
+\begin{multicols}{3}
+%\maketitle
+\noindent
+{\huge \textbf{R Beginner's Reference}}\\
+\emph{felix.engelmann@uni-potsdam.de}\\
+Version of \today 
+
+
+\section{Basics}
+\begin{description}
+\item[help(command)] opens documentation of \texttt{command}.
+\item[?command] does the same as \texttt{help()}.
+\item[help.search("topic")] searches documentation and help pages for \texttt{topic}.
+% \item[example(command)] shows example code for \texttt{command}.
+
+\item[install.packages("package")] installs \texttt{package}.
+\item[library(package)] loads \texttt{package}.
+\item[setwd(path)] sets working directory for loading and writing files to \texttt{path}. 
+\item[head(x, n=6)] lists first \texttt{n} lines or elements of object \texttt{x}. 
+\item[tail(x, n=6)] lists \textit{last} \texttt{n} lines or elements of object \texttt{x}.
+\item[summary(x)] gives \textit{generic} summary of \texttt{x} (information depends on the class of \texttt{x}). For continuous variables it shows mean, median, range of quartiles around median, and the extreme values.
+\item[str(x)] displays the internal structure of \texttt{x}.
+%\item[attributes(x)] accesses an object's attributes.
+\item[save(file=file, ...)] saves all objects given in \texttt{...} to \texttt{file} in a space saving binary format.
+\item[load(file)] loads binary file (all contained objects are available with the names they were saved with).
+\item[ls()] lists all available objects.
+\item[NA] stands for missing data.
+\end{description}
+
+\section{Logical comparisons}
+\begin{description}
+\item[x == y]: \texttt{x} equals \texttt{y} (do not use ``\texttt{=}'').
+\item[x != y]: \texttt{x} unequal \texttt{y} ("\texttt{!}" is the negation operator).
+\item[x > y]: greater (smaller: \texttt{<}).
+\item[x <= y]: smaller or equal (or \texttt{>=}).
+\item[x \%in\% y]: \texttt{x} is member of set \texttt{y}.
+\item[x !\%in\% y]: \texttt{x} is NOT member of \texttt{y}.
+\item[x \%in\% y \& x > n]: combination with logical \texttt{AND}.
+\item[x == y $\mid$ x < n]: combination with logical \texttt{OR}.
+\item[is.na(x)] tests for missing values in \texttt{x}.
+\end{description}
+
+
+\section{Vectors and Strings}
+\begin{description}
+\item[c(...)] combines elements into a vector: \texttt{c(1,2,3)}
+\item[from:to] generates a sequence: \texttt{x <- 1:10}
+\item[seq(from=1, to=1, by=1)] generates a sequence in the given interval and step size: \texttt{seq(1,2,0.2)} returns \texttt{1.0 1.2 1.4 1.6 1.8 2.0}
+\item[rep(x, n)] repeats vector \texttt{x} \texttt{n} times.
+\item[sort(x, decreasing=F)] sorts vector \texttt{x} in ascending or decreasing (set \texttt{decreasing=T}) order.
+\item[unique(x)] returns \texttt{x} with duplicates removed.
+\item[length(x)] returns number of elements in vector \texttt{x}.
+
+\item[x{[...]}] refers to elements in a vector. \texttt{...} must be a vector of position indices or a logical statement that is \texttt{TRUE} or \texttt{FALSE} for each element in \texttt{x}.
+\item[x{[i]}] accesses \texttt{i}\textsuperscript{th} element of \texttt{x}.
+% \item[x{[i:j]}] returns elements in positions \texttt{i} to \texttt{j}.
+\item[x{[c(1,3,5)]}] accesses positions 1, 3, 5.
+\item[x{[-i]}] all but \texttt{i}\textsuperscript{th} element.
+\item[x{[x == a]}] all elements of \texttt{x} that equal the value of \texttt{a}.
+% \item[x{[x > a \& x < b]}] elements with value (not position!) between \texttt{a} and \texttt{b}.
+% \item[x{[x \%in\% y]}] elements of \texttt{x} that belong to set \texttt{y}.
+\item[x[!is.na(x)]] returns elements of \texttt{x} that are not missing values.
+\item[which(x > a)] returns indices of elements in \texttt{x} that are greater than a.
+\item[paste(..., sep=`` '')] concatenates multiple character strings, separated by \texttt{sep}.
+\end{description}
+
+
+\section{Data frames}
+\begin{description}
+\item[data.frame(...)] creates a data frame of the arguments: \texttt{data.frame(subj=1:4, group=rep(c(1,2),2), session=1)}
+Shorter vectors are recycled to the length of the longest.
+\item[d <- read.table(file, header=F, sep="")] reads \texttt{file} in table format and stores it in variable \texttt{d}. Set \texttt{header=T} to read first line as column names. \texttt{sep} sets the column separator (default is any form of whitespace).
+\item[write.table(x, file)] write object \texttt{x} in table format to \texttt{file}.
+\item[df\$name] returns column named \texttt{name} of data frame \texttt{df} as a vector (also used to access attributes of objects of other classes).
+\item[dim(df)] returns the dimensions of object \texttt{df} as a vector \texttt{c(nrow, ncol)} (can be accessed individually by, e.g., \texttt{dim(df)[1]}).
+\item[colnames(df)]
+\item[df{[r,c]}] element in row \texttt{r} and column \texttt{c} in \texttt{df}.
+\item[df{[r,]}] returns row \texttt{r}.
+\item[df{[,c]}] returns column \texttt{c}.
+\item[df{[,i:j]}] returns columns \texttt{i} to \texttt{j}.
+\item[df\$a{[df\$b==n]}] returns all elements of column \texttt{a} for which elements in column \texttt{b} equal \texttt{n}: \texttt{df\$subj[df\$group==2]}
+\item[subset(df, a > n \& b != m)] returns subset of \texttt{df} where column \texttt{a} is greater \texttt{n} and column \texttt{b} is unequal \texttt{m}.  
+\end{description}
+
+\section{Lists and matrices}
+\begin{description}
+\item[matrix(x, nrow=n, ncol=m)] creates a matrix of \texttt{n} rows and \texttt{m} columns, filled with elements of \texttt{x}: \texttt{m <- matrix(1:8,nrow=4)}
+\item[m <- cbind(c(1,2),c(3,4))] creates a matrix out of two vectors by column.
+\item[m{[,c(2,3)]}] refers to columns 2 and 3 of matrix \texttt{m}.
+%owMeans() and colMeans() return vectors containing the means of the rows and columns. There are also corresponding functions rowSums() and colSums().
+\item[list(name=value, ...)] creates a list of names and values. Values can be any other R object: \texttt{m1 <- list(model="model1", data=df, params=c(1,5,0.3))}
+\item[l\$name] accesses list element named \texttt{name}.
+\item[l{[i]}] accesses \texttt{i}\textsuperscript{th} list element.
+\item[l{[[i]]}] accesses value of \texttt{i}\textsuperscript{th} list element.
+\end{description}
+
+\section{Data processing}
+\begin{description}
+\item[rbind(...)] combines arguments by rows (when combining data frames by row, they must have the same number of columns).
+\item[cbind(...)] combines arguments by columns.
+\item[merge(x, y, by)] merges two data frames by common columns specified with the \texttt{by} argument: \texttt{merge(x, y, by=c("subj","group"))}
+\item[table(x, ...)] returns table of the counts at each combination of factor levels: table(x) counts occurences of \texttt{x}'s elements; \texttt{table(x,y)} counts occurences of combinations of \texttt{x}'s and \texttt{y}'s elements.
+%\item[xtabs(formula, data)] creates a contingency table from cross-classifying factors in a data frame: \texttt{xtabs(Freq \~{} Gender + Admit, DF)} (\texttt{xtabs(\~{} x + y, df)} is the same as \texttt{table(df\$x,df\$y)})
+\item[apply(X, MARGIN, FUN)] applies function \texttt{FUN} to rows (\texttt{MARGIN=1}) or columns (\texttt{MARGIN=2}) of \texttt{X}: \texttt{colsum <- apply(df, 2, sum)}
+%\item[lapply(X, FUN)] applies FUN to each element of the list \texttt{X}
+\item[tapply(X, INDEX, FUN)] applies \texttt{FUN} to each group of values in \texttt{X} specified by a list of factors \texttt{INDEX}: \texttt{tapply(df\$acc, list(df\$subj, df\$cond), mean)}
+%\item[melt()]
+%\item[cast()]
+\item[aggregate(x, by, FUN)] computes summary statistics for data frame \texttt{x}, grouped by elements in \texttt{by}, with function \texttt{FUN}, returns data frame.
+\item[ifelse(test, yes, no)] returns values specified by \texttt{yes} or \texttt{no} depending on whether \texttt{test} is \texttt{TRUE} or \texttt{FALSE}: \texttt{ifelse(x>=0, sqrt(x), NA)}
+\item[factor(x, levels, labels)] encodes a vector \texttt{x} as a factor with \texttt{levels=unique(x)}. Re-order factor levels by explicitly specifying in \texttt{levels}. Rename levels by giving new names in \texttt{labels}.
+\item[as.vector(x)] coerces \texttt{x} into a vector.
+\item[with(data, expr)] evaluates expression \texttt{expr} within environment \texttt{data}: \texttt{with(diamonds, boxplot(prize~carat))}
+\end{description}
+
+\section{Plotting}
+\begin{description}
+\item[hist()] plots a histogram of the frequencies of x.
+\item[plot(values)] plots of the \texttt{values} on the y-axis, ordered on the x-axis.
+\item[plot(x, y)] plots x on the x-axis and y on the y-axis.
+\item[boxplot(x)] draws ``box-and-whiskers''plot of variable \texttt{x}. It shows median, upper and lower quartile (together 50\% of the data), the minimum and maximum (if inside 1,5$\times$interquartile range), and outliers (as single points).
+\item[barplot(height, horiz=FALSE)] creates a bar plot with vertical or horizontal bars of height specified in the vector \texttt{height}.
+\item[abline(intercept, slope)] adds a straight line with \texttt{intercept} and \texttt{slope} to an existing plot. 
+\item[abline(h=y, v=x)] adds either a horizontal line with intercept \texttt{y} or a vertical line with intercept \texttt{x}.
+\item[points(x, y)] adds points with coordinate vectors \texttt{x} and \texttt{y} to an existing plot.
+\item[lines(x, y)] adds lines with coordinate vectors \texttt{x} and \texttt{y} to an existing plot.
+\item[text(x, y, labels)] adds text given by labels at coordinates \texttt{x} and \texttt{y}.
+%\item[qqplot()] quantile-quantile plot
+\end{description}
+
+
+\section{Math and statistics}
+\noindent
+Basic arithmetics: \texttt{+}, \texttt{-}, \texttt{*}, \texttt{/}, \texttt{\^} (power), \texttt{\%\%} (modulo)
+\begin{description}
+\item[log(x, base=exp(1))] computes the logarithm of \texttt{x} with specified \texttt{base} (default natural logarithm).
+%\item[log10(x)]
+%\item[log2(x)]
+\item[exp(x)] computes the exponential of \texttt{x}.
+\item[sqrt(x)] computes the square root of \texttt{x}.
+\item[round(x, n)] rounds the elements of \texttt{x} to \texttt{n} decimals.
+\item[sum(x)] returns sum of elements of \texttt{x}.
+%\item[max(x)] returns maximum of elements of \texttt{x}.
+%\item[sum(x)] returns sum of elements of \texttt{x}.
+%\item[mean(x)] returns mean of elements of \texttt{x}.
+%\item[median(x)] returns median of elements of \texttt{x}.
+%\item[sd(x)] returns standard deviation of elements of \texttt{x}.
+%\item[var(x)] returns variance of elements of \texttt{x}.
+\end{description}
+\noindent
+Analogously: \texttt{max(x)}, \texttt{min(x)}, \texttt{mean(x)}, \texttt{median(x)}, \texttt{var(x)}, \texttt{sd(x)}
+
+\section{Statistical analysis}
+\begin{description}
+%\item[cor(x)] calculates correlation matrix of \texttt{x} if it is a matrix or a data frame.
+\item[cor(x,y)] calculates linear correlation between \texttt{x} and \texttt{y}.
+\item[t.test(x, y, mu = 0, paired = FALSE,)] performs one and two sample t-tests on vectors of data.
+\item[aov(formula, data)] fits an analysis of variance model.
+\item[anova(object,...)] computes analysis of variance (or deviance) tables for one or more fitted model objects.
+\item[lm(formula, data)] fits a linear model with \texttt{formula} of the form \texttt{response \~{} linear predictors}. Predictor variables are separated by \texttt{+}, interactions are symbolized by \texttt{f1:f2}: \texttt{lm(IQ \~{} age + edu + age:edu, df)}
+\item[lmer(formula, data=d)] fits a linear mixed-effects model that includes fixed-effects and random-effects (package \texttt{lme4}): \texttt{lmer(log(TFT) \~{} cond + (1|subj), data=df)}
+\end{description}
+
+
+\section{Distributions}
+\begin{description}
+\item[rnorm(n, mean=0, sd=1)] samples \texttt{n} times from a Gaussian normal distribution with given \texttt{mean} and \texttt{sd}.
+\item[dnorm(x, mean=0, sd=1)] is the probability density function (pdf) of the normal distribution; it maps x to its relative likelihood with in a normally distributed random variable with given \texttt{mean} and \texttt{sd}.
+\item[pnorm(q, mean=0, sd=1, lower.tail=TRUE)] is the distribution function that gives the cumulative probability of values between $-Inf$ and \texttt{q} or \texttt{q} and $Inf$ (with \texttt{lower.tail=FALSE}): \texttt{pnorm(0, mean=0)} returns \texttt{0.5}.
+\item[qnorm(p, mean=0, sd=1, lower.tail=TRUE)] is the quantile function (reverse of \texttt{pnorm()}) that gives the range of values beginning at $-Inf$ or $Inf$ (with \texttt{lower.tail=FALSE}) that has cumulative probability \texttt{p}: \texttt{qnorm(0.5)} returns \texttt{0}.
+\item[sample(x, size=n)] takes n (default \texttt{size=1}) random samples from variable x.
+\end{description}
+
+
+\section{Programming}
+\begin{description}
+\item[funname <- function(arglist)\{expr\}] defines a function with the name ``\texttt{funname}'', that takes arguments specified in \texttt{arglist} and executes \texttt{expr}.
+\item[if(cond)\{expr\}] executes \texttt{expr} only if \texttt{cond} statement is \texttt{TRUE}.
+\item[for(var in vector)\{expr\}] repeats \texttt{expr} once for each element in \texttt{vector}, making the according element available in variable \texttt{var} in each iteration: \texttt{for(i in 1:10)\{print(i)\}}
+\end{description}
+
+\section{Plotting parameters}
+\begin{description}
+\item[main] sets the main title.
+\item[xlab ylab] sets axis labels.
+\item[xlim ylim] sets lower and upper limits of axes: \texttt{xlim=c(1,10)}
+\item[type="p"] specifies the plotting type (\texttt{p} for points, \texttt{l} for lines, \texttt{b} for both).
+\item[lty] specifies line type (solid or variants of dashed), must be an integer between 1 and 6.
+\item[pch] specifies symbol used for points (integer between 1 and 25).
+\end{description}
+
+\vspace{0.3cm}
+\noindent
+{\footnotesize For a more exhaustive list, see:\\ 
+\texttt{http://cran.r-project.org/doc/contrib/Short-refcard.pdf}\\
+or in general: \texttt{http://cran.r-project.org/other-docs.html}.}
+\end{multicols}
+
+
+\end{document}  
